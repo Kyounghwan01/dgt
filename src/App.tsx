@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useLayoutEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useSettingStore } from "./store/setting";
+import Main from "./pages/Main";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import Insert from "./pages/Insert";
 
-function App() {
+const Index = () => {
+  const { isDarkMode } = useSettingStore();
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute(
+      "data-prefers-color-scheme",
+      isDarkMode ? "dark" : "light"
+    );
+  }, [isDarkMode]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Main />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/insert" element={<Insert />}></Route>
+          <Route path="*" element={<NotFound />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </>
   );
-}
+};
 
-export default App;
+export default Index;
