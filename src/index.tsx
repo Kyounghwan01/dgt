@@ -9,6 +9,7 @@ import { getFirestore } from "firebase/firestore";
 import koKR from "antd-mobile/es/locales/ko-KR";
 import { initializeApp } from "firebase/app";
 
+console.log(123, process.env.REACT_APP_APIKEY);
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
   authDomain: process.env.REACT_AUTH_DOMAIN,
