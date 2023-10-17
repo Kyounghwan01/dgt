@@ -9,7 +9,15 @@ import { getFirestore } from "firebase/firestore";
 import koKR from "antd-mobile/es/locales/ko-KR";
 import { initializeApp } from "firebase/app";
 
-const firebaseConfig = {};
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: "",
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

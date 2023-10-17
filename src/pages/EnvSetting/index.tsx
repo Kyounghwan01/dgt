@@ -1,4 +1,4 @@
-import { Form, Input, Checkbox, Button, NavBar, Divider } from "antd-mobile";
+import { NavBar } from "antd-mobile";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
