@@ -1,13 +1,33 @@
-import { useLayoutEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useLayoutEffect } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { useSettingStore } from "./store/setting";
 import Main from "./pages/Main";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Insert from "./pages/Insert";
+import SignUp from "./pages/SignUp";
+import EnvSetting from "./pages/EnvSetting";
+import TraningDetail from "./pages/TraniningDetail";
 
 const Index = () => {
-  const { isDarkMode } = useSettingStore();
+  const { isDarkMode, setIsLogin, isLogin, setUserName } = useSettingStore();
+
+  useEffect(() => {
+    const response = localStorage.getItem("training-tool");
+    // todo: 1달이상이면 로그아웃, 스토리지 지우기
+    setIsLogin(response ? true : false);
+    if (response) {
+      const { id, name } = JSON.parse(response);
+      setUserName(id, name);
+    }
+  }, []);
+
   useLayoutEffect(() => {
     document.documentElement.setAttribute(
       "data-prefers-color-scheme",
@@ -15,14 +35,27 @@ const Index = () => {
     );
   }, [isDarkMode]);
 
+  const ProtectedRoute = ({ redirectPath = "/login" }) => {
+    if (!isLogin) {
+      return <Navigate to={redirectPath} replace />;
+    }
+
+    return <Outlet />;
+  };
+
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Main />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/insert" element={<Insert />}></Route>
-          <Route path="*" element={<NotFound />}></Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Main />} />
+            <Route path="/insert" element={<Insert />} />
+            <Route path="/traning-detail" element={<TraningDetail />} />
+            <Route path="/env-setting" element={<EnvSetting />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

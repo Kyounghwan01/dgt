@@ -1,30 +1,40 @@
 import { useState } from "react";
 import { Form, Input, Button, Dialog } from "antd-mobile";
 import { useNavigate } from "react-router-dom";
-import getUsers from "../../api/getUsers";
+import dayjs from "dayjs";
+import addUsersCollection from "../../api/addUsersCollection";
 import { useSettingStore } from "../../store/setting";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { setIsLogin, setUserName } = useSettingStore();
+  const { setIsLogin } = useSettingStore();
   const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
   const [userPw, setUserPw] = useState("");
 
-  const checkPassword = async () => {
-    const { isSuccess, errMsg, payload } = await getUsers({
+  const onFinish = async () => {
+    const { isSuccess, errMsg } = await addUsersCollection({
       id: userId,
-      password: userPw,
+      pw: userPw,
+      name: userName,
     });
-    if (!isSuccess) {
+    if (isSuccess) {
+      setIsLogin(true);
+      localStorage.setItem(
+        "training-tool",
+        JSON.stringify({
+          id: userId,
+          lastLogin: dayjs(new Date()).format("YYYYMMDD"),
+          name: userName,
+        })
+      );
+      navigate("/");
+    } else {
       Dialog.alert({
         content: errMsg,
-        title: "로그인 실패",
+        title: "회원가입실패",
         confirmText: "확인",
       });
-    } else {
-      setIsLogin(true);
-      setUserName(payload.id, payload.name);
-      navigate("/");
     }
   };
 
@@ -32,21 +42,20 @@ const Index = () => {
     <>
       <Form
         name="form"
-        onFinish={checkPassword}
+        onFinish={onFinish}
         footer={
           <Button
-            disabled={!(userId && userPw)}
+            disabled={!(userId && userPw && userName)}
             block
             type="submit"
             color="primary"
-            size="middle"
-            onClick={checkPassword}
+            size="large"
           >
-            로그인
+            회원가입
           </Button>
         }
       >
-        <Form.Header>트레이닝 노트북</Form.Header>
+        <Form.Header>트레이닝 노트북 회원가입</Form.Header>
         <Form.Item
           label="아이디를 입력해주세요."
           rules={[{ required: true, message: "아이디를 입력해주세요." }]}
@@ -55,6 +64,16 @@ const Index = () => {
             placeholder="아이디 입력"
             value={userId}
             onChange={(e) => setUserId(e)}
+          />
+        </Form.Item>
+        <Form.Item
+          label="이름을 입력해주세요."
+          rules={[{ required: true, message: "이름을 입력해주세요." }]}
+        >
+          <Input
+            placeholder="이름 입력"
+            value={userName}
+            onChange={(e) => setUserName(e)}
           />
         </Form.Item>
         <Form.Item
@@ -68,17 +87,6 @@ const Index = () => {
           />
         </Form.Item>
       </Form>
-      <div style={{ padding: "0 12px" }}>
-        <Button
-          onClick={() => navigate("/sign-up")}
-          block
-          type="submit"
-          color="primary"
-          size="middle"
-        >
-          회원가입
-        </Button>
-      </div>
     </>
   );
 };
