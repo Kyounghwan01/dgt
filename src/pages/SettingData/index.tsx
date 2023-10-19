@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, NavBar, Dialog } from "antd-mobile";
 import { useSettingStore, IDefaultValue } from "../../store/setting";
 import addDefaultTranining from "../../api/addDefaultTranining";
+import getDefaultTranining from "../../api/getDefaultTranining";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -10,8 +11,25 @@ const Index = () => {
     useSettingStore();
   const [defaultValue, setDefaultValue] = useState(defaultTraniningData);
 
+  useEffect(() => {
+    if (!userId) return;
+    gettt();
+  }, []);
+
+  const gettt = async () => {
+    const response = await getDefaultTranining(userId);
+    if (response?.isSuccess && response.payload) {
+      setDefaultValue(response.payload);
+    }
+    if (!response?.isSuccess) {
+      Dialog.alert({
+        content: response?.errMsg,
+        confirmText: "확인",
+      });
+    }
+  };
+
   const onChangeDefaultValues = (type: keyof IDefaultValue, value: string) => {
-    console.log(type, value);
     setDefaultValue({ ...defaultValue, [type]: value });
   };
 
