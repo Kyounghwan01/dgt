@@ -12,7 +12,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Insert from "./pages/Insert";
 import SignUp from "./pages/SignUp";
-import EnvSetting from "./pages/EnvSetting";
+import SettingData from "./pages/SettingData";
 import TraningDetail from "./pages/TraniningDetail";
 
 const Index = () => {
@@ -53,7 +53,7 @@ const Index = () => {
             <Route path="/" element={<Main />} />
             <Route path="/insert" element={<Insert />} />
             <Route path="/traning-detail" element={<TraningDetail />} />
-            <Route path="/env-setting" element={<EnvSetting />} />
+            <Route path="/settings" element={<SettingData />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

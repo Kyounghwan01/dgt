@@ -1,9 +1,3 @@
-const enduranceData = {
-  isTraining: true,
-  categoryLabelName: "지구력",
-  description: "초록 난이도 5분 2~3세트",
-};
-
 const coreData = {
   isTraining: true,
   categoryLabelName: "코어",
@@ -167,9 +161,9 @@ const shoulderData = {
 };
 
 export const initTrainingData = {
-  enduranceData,
   coreData,
   powerData,
   balanceData,
   shoulderData,
+  weight: 0,
 };

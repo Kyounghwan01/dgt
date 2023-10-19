@@ -1,11 +1,33 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
-import { Divider, Button, Dialog, Calendar, List } from "antd-mobile";
-import { BottomBtn } from "../../style/commonStyle.styled";
+import { Divider, Button, Dialog, Calendar, List, TabBar } from "antd-mobile";
 import { useTrainingStore, ITrainingData } from "../../store/training";
 import { useSettingStore } from "../../store/setting";
 import getUserTrainingData from "../../api/getUserTrainingData";
+import { BottomBtn } from "../../style/commonStyle.styled";
+import {
+  CalendarOutline,
+  UserSetOutline,
+  HistogramOutline,
+} from "antd-mobile-icons";
+const tabs = [
+  {
+    key: "/",
+    title: "달력",
+    icon: <CalendarOutline />,
+  },
+  {
+    key: "/chart",
+    title: "차트 (언젠가 할꺼)",
+    icon: <HistogramOutline />,
+  },
+  {
+    key: "/settings",
+    title: "설정",
+    icon: <UserSetOutline />,
+  },
+];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -18,11 +40,12 @@ const Index = () => {
     powerData,
     balanceData,
     shoulderData,
-    enduranceData,
     setAllTraniningData,
     setInitData,
   } = useTrainingStore();
   const { userId } = useSettingStore();
+  const location = useLocation();
+  const { pathname } = location;
 
   useEffect(() => {
     if (!trainingDate) {
@@ -32,6 +55,10 @@ const Index = () => {
 
     getTrainingData();
   }, [trainingDate]);
+
+  const setRouteActive = (value: string) => {
+    navigate(value);
+  };
 
   const getTrainingData = async () => {
     const response = await getUserTrainingData({ userId, date: trainingDate });
@@ -59,12 +86,7 @@ const Index = () => {
         params = { ...params, [data.categoryName]: newData };
       });
 
-      params.enduranceData = {
-        ...enduranceData,
-        isTraining: response.payload[0].enduranceData.isTraining,
-      };
-
-      setAllTraniningData(params);
+      setAllTraniningData({ ...params, weight: response.payload[0].weight });
     }
 
     if (response.isSuccess && !response.payload.length) {
@@ -118,18 +140,29 @@ const Index = () => {
       </div>
 
       {!timeStamp && (
-        <BottomBtn>
+        <div style={{ width: "100%", textAlign: "center" }}>
           <Button
             onClick={() => navigate("/insert")}
-            block
+            fill={"outline"}
             color="primary"
             size="large"
             disabled={!trainingDate}
           >
             기입
           </Button>
-        </BottomBtn>
+        </div>
       )}
+
+      <BottomBtn>
+        <TabBar
+          activeKey={pathname}
+          onChange={(value) => setRouteActive(value)}
+        >
+          {tabs.map((item) => (
+            <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+          ))}
+        </TabBar>
+      </BottomBtn>
     </>
   );
 };

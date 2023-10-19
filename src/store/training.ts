@@ -32,18 +32,14 @@ export interface ITrainingData {
   powerData: ICategory;
   balanceData: ICategory;
   shoulderData: ICategory;
-  enduranceData: {
-    isTraining: boolean;
-    categoryLabelName: string;
-    description: string;
-  };
+  weight: number;
 }
 
 interface ITrainingStore extends ITrainingData {
   trainingDate: string;
   timeStamp: string;
   setTrainingDate: (date: string) => void;
-  setEnduranceData: (data: boolean) => void;
+  setWeight: (data: number) => void;
   setIsTrain: (type: TrainingType, data: boolean) => void;
   setTrainData: (
     type: TrainingType,
@@ -67,9 +63,7 @@ export interface ITraningValue {
   powerData: IR;
   balanceData: IR;
   shoulderData: IR;
-  enduranceData: {
-    isTraining: boolean;
-  };
+  weight: number;
   timeStamp: string;
 }
 
@@ -81,10 +75,6 @@ export const useTrainingStore = create<ITrainingStore>()(
     setTrainingDate: (date) =>
       set((state) => {
         state.trainingDate = date;
-      }),
-    setEnduranceData: (data) =>
-      set((state) => {
-        state.enduranceData.isTraining = data;
       }),
     setIsTrain: (type, data) =>
       set((state) => {
@@ -106,18 +96,23 @@ export const useTrainingStore = create<ITrainingStore>()(
       set((state) => {
         state.balanceData = initTrainingData.balanceData;
         state.coreData = initTrainingData.coreData;
-        state.enduranceData = initTrainingData.enduranceData;
         state.shoulderData = initTrainingData.shoulderData;
         state.powerData = initTrainingData.powerData;
+        state.weight = initTrainingData.weight;
       });
     },
     setAllTraniningData: (data) => {
       set((state) => {
         state.balanceData = data.balanceData;
         state.coreData = data.coreData;
-        state.enduranceData = data.enduranceData;
         state.shoulderData = data.shoulderData;
         state.powerData = data.powerData;
+        state.weight = data.weight;
+      });
+    },
+    setWeight: (data) => {
+      set((state) => {
+        state.weight = data;
       });
     },
   }))

@@ -23,13 +23,13 @@ import { useEffect } from "react";
 const Index = ({ isEdit }: { isEdit: boolean }) => {
   const navigate = useNavigate();
   const {
-    enduranceData,
+    weight,
     coreData,
     powerData,
     balanceData,
     shoulderData,
     trainingDate,
-    setEnduranceData,
+    setWeight,
     setIsTrain,
     setTrainData,
     setInitData,
@@ -80,8 +80,8 @@ const Index = ({ isEdit }: { isEdit: boolean }) => {
 
     params = {
       ...params,
-      enduranceData: { isTraining: enduranceData.isTraining },
       timeStamp: dayjs(new Date()).format("YYYY.MM.DD HH:mm"),
+      weight,
     };
 
     const response = await addDateCollectioon(userId, trainingDate, params);
@@ -92,7 +92,13 @@ const Index = ({ isEdit }: { isEdit: boolean }) => {
       });
       return;
     } else {
-      navigate("/");
+      Dialog.alert({
+        content: "저장하였습니다",
+        confirmText: "확인",
+        onConfirm: () => {
+          navigate("/");
+        },
+      });
     }
   };
 
@@ -124,24 +130,20 @@ const Index = ({ isEdit }: { isEdit: boolean }) => {
 
       <div style={{ padding: "50px 0 100px" }}>
         <div style={{ padding: "16px", fontSize: "15px", color: "#697b8c" }}>
-          지구력
+          체중 (kg)
         </div>
         <Form requiredMarkStyle="asterisk">
           <Form.Item>
-            <Checkbox
-              onChange={(e) => setEnduranceData(e)}
-              value={enduranceData.isTraining ? 1 : 0}
-              defaultChecked={enduranceData.isTraining}
-              style={{ "--icon-size": "15px", "--font-size": "15px" }}
+            <Input
+              placeholder={`체중울 입력해주세요`}
+              type="number"
+              min={0}
               disabled={!isEdit}
-            >
-              완료여부
-            </Checkbox>
+              onChange={(inputData) => setWeight(Number(inputData))}
+              defaultValue={String(weight)}
+            />
           </Form.Item>
         </Form>
-
-        <div style={{ height: "20px" }} />
-
         {[coreData, balanceData, powerData, shoulderData].map((data) => (
           <div key={data.categoryLabelName}>
             <Form requiredMarkStyle="text-required">
@@ -267,6 +269,3 @@ const Index = ({ isEdit }: { isEdit: boolean }) => {
 };
 
 export default Index;
-
-// 처음들어오고 나가면 init으로 초기화
-// 두번째 들어올때는 들어오면 값 매칭 나갈때는 초기화
